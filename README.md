@@ -5,7 +5,13 @@ work the way they do.
 
 ideally in the future written using my trinic programming language
 
-## Usage
+## goals / implementation details
+
+no idea lol
+
+
+
+## usage
 ```sh
 # clone repo
 git clone https://github.com/jansheikkinen/jansos.git
