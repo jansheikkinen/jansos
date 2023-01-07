@@ -2,10 +2,10 @@ ASM = nasm
 ASM_FLAGS = -f elf32
 
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -g -fno-stack-protector -m32 -c
+CFLAGS = -Wall -Wextra -pedantic -g -fno-stack-protector -m32 -c -nostdlib -ffreestanding
 
 LD = ld
-LD_FLAGS = -m elf_i386 -T
+LD_FLAGS = -m elf_i386 -nostdlib -T
 
 C_SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
 C_OBJ = $(C_SRC:.c=.o)

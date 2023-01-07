@@ -14,4 +14,5 @@ void k_clear_screen(void);
 
 extern unsigned int cursor_loc;
 extern char* vid_ptr;
+
 #endif

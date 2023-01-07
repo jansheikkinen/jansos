@@ -5,11 +5,6 @@
 #define INTERRUPT_GATE 0x8E
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 
-#define PIC1_CMD  0x20
-#define PIC1_DATA 0x21
-#define PIC2_CMD  0xA0
-#define PIC2_DATA 0xA1
-
 struct idt_entry {
   unsigned short offset_low;
   unsigned short selector;
