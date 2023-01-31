@@ -22,9 +22,9 @@ enum VGAColors {
   VGA_WHITE,
 };
 
-const size_t VGA_WIDTH = 80;
-const size_t VGA_HEIGHT = 25;
-const size_t VGA_SIZE = (VGA_WIDTH * VGA_HEIGHT) * sizeof(uint16_t);
+extern const size_t VGA_WIDTH;
+extern const size_t VGA_HEIGHT;
+extern const size_t VGA_SIZE;
 
 struct Terminal {
   size_t row, col;

@@ -6,6 +6,10 @@
 #define VGA_BUFFER ((uint16_t*)0xB8000)
 #define VGA_INDEX(x, y) pos_to_index((x), (y), VGA_WIDTH)
 
+const size_t VGA_WIDTH = 80;
+const size_t VGA_HEIGHT = 25;
+const size_t VGA_SIZE = (VGA_WIDTH * VGA_HEIGHT) * sizeof(uint16_t);
+
 static inline uint8_t vga_color(enum VGAColors fg, enum VGAColors bg) {
   return fg | bg << 4;
 }
@@ -20,7 +24,7 @@ static inline size_t pos_to_index(size_t x, size_t y, size_t width) {
 
 void term_init(struct Terminal* term) {
   term->row = 0, term->col = 0;
-  term->color = vga_color(VGA_WHITE, VGA_DARK_GRAY);
+  term->color = vga_color(VGA_WHITE, VGA_BLACK);
   term->buffer = VGA_BUFFER;
 
   for(size_t y = 0; y < VGA_HEIGHT; y++) {
@@ -41,12 +45,14 @@ void term_putc_at(struct Terminal* term, unsigned char c,
 }
 
 void term_putc(struct Terminal* term, unsigned char c) {
-  if(c == '\n') {
-    term->row = (term->row + 1) % VGA_WIDTH;
-    term->col = 0;
+  switch(c) {
+    case '\n':
+      term->row += 1; term->col = 0; break;
+    case '\b':
+      term->col -= 1; break;
+    default:
+      term_putc_at(term, c, term->col, term->row, term->color);
   }
-
-  term_putc_at(term, c, term->row, term->col, term->color);
 
   if(++term->col >= VGA_WIDTH) {
     term->col = 0;
