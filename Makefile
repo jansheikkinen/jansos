@@ -13,7 +13,7 @@ OBJ = $(C_SRC:.c=.o) $(S_SRC:.s=.o)
 BUILD = build
 LINK_FILE = linker.ld
 
-all: clear dirs clean run
+all: clear clean dirs run
 
 intercept: clean
 	intercept-build --append make build
