@@ -1,18 +1,23 @@
 // kernel.c
 
-#include "idt.h"
-#include "screen.h"
-#include "keyboard.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-void k_main(void) {
-  const char* str = "Hello, world!";
+#include "vga/terminal.h"
 
-  k_clear_screen();
-  k_print(str);
-  k_print_newline();
+#ifdef __linux__
+#error "not using a cross-compiler"
+#endif
 
-  idt_init();
-  kb_init();
+#ifndef __i386__
+#error "kernel only works for x86"
+#endif
 
-  while(1) __asm__("hlt");
+int k_main(void) {
+  struct Terminal term;
+  term_init(&term);
+  term_puts(&term, "Hello, world!\n");
+
+  return 0;
 }

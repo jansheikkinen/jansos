@@ -1,39 +1,44 @@
-ASM = nasm
-ASM_FLAGS = -f elf32
+# Makefile
 
-CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -g -fno-stack-protector -m32 -c -nostdlib -ffreestanding
-
-LD = ld
-LD_FLAGS = -m elf_i386 -nostdlib -T
+AS = i686-elf-as
+CC = i686-elf-gcc
+LIBS = -lgcc
+CLAGS = -ffreestanding -nostdlib -O2 -std=gnu17 -Wall -Wextra -Wshadow \
+				-Wwrite-strings -Wstrict-prototypes $(LIBS)
 
 C_SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
-C_OBJ = $(C_SRC:.c=.o)
-
-ASM_SRC = $(wildcard src/*.asm) $(wildcard src/**/*.asm)
-ASM_OBJ = $(ASM_SRC:.asm=.o)
+S_SRC = $(wildcard src/*.s) $(wildcard src/**/*.s)
+OBJ = $(C_SRC:.c=.o) $(S_SRC:.s=.o)
 
 BUILD = build
 
 all: clear dirs clean run
 
+intercept: clean
+	intercept-build --append make build
+
 dirs:
-	mkdir -p $(BUILD) src tests
+	mkdir -p $(BUILD)/boot/grub src tests doc
 
-run: build
-	qemu-system-i386 -kernel $(BUILD)/kernel-69
+run: mkrescue
+	qemu-system-i386 -cdrom $(BUILD)/kernel.iso
 
-build: $(C_OBJ) $(ASM_OBJ)
-	$(LD) $(LD_FLAGS) link.ld -o build/kernel-69 $(C_OBJ) $(ASM_OBJ)
+mkrescue: build
+	cp $(BUILD)/kernel.bin $(BUILD)/boot/kernel.bin
+	cp grub.cfg $(BUILD)/boot/grub/grub.cfg
+	grub-mkrescue -o $(BUILD)/kernel.iso $(BUILD)
 
-%.o: %.asm
-	$(ASM) $(ASM_FLAGS) -o $@ $<
+build: $(OBJ)
+	$(C)) $(CFLAGS) $(INCLUDE) -o $(BUILD)/kernel.bin $?
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $<
+
+%.o: %.s
+	$(AS) -o $@ $<
 
 clean:
-	rm -Rf $(C_OBJ) $(ASM_OBJ) build/*
+	rm -Rf $(OBJ) $(BUILD)/*
 
 clear:
 	clear
